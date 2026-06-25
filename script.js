@@ -20,88 +20,110 @@ console.log("Готов к новым проектам!");
 
 // --- СИСТЕМА ОТЗЫВОВ (РЕАЛЬНАЯ БАЗА ДАННЫХ FIREBASE) ---
 
-// --- ПОДКЛЮЧЕНИЕ К БАЗЕ ДАННЫХ ---
-// (Переменные database и reviewsRef мы объявили в index.html, поэтому здесь они уже доступны)
+// --- СИСТЕМА ОТЗЫВОВ (НА БРАУЗЕРЕ) ---
 
-// --- СИСТЕМА ОТЗЫВОВ ---
+// 1. Загружаем отзывы при открытии
+function loadReviews() {
+    const list = document.getElementById('reviewsList');
+    list.innerHTML = ''; // Очищаем
 
-// 1. Функция отправки отзыва в Firebase
+    // Получаем данные из памяти браузера
+    const stored = localStorage.getItem('dsdfeels_reviews');
+    let reviews = [];
+    
+    if (stored) {
+        try {
+            reviews = JSON.parse(stored);
+        } catch (e) {
+            reviews = [];
+        }
+    }
+
+    if (reviews.length > 0) {
+        // Переворачиваем (новые сверху)
+        reviews.reverse().forEach(review => {
+            const card = document.createElement('div');
+            
+            // Стили
+            card.style.backgroundColor = "#f8f9fa";
+            card.style.padding = "15px";
+            card.style.borderRadius = "10px";
+            card.style.borderLeft = "4px solid #3498db";
+            card.style.marginBottom = "12px";
+            card.style.textAlign = "left";
+
+            // Элементы
+            let strongName = document.createElement('strong');
+            strongName.style.color = "#2c3e50";
+            strongName.style.fontSize = "16px";
+            strongName.textContent = review.name;
+
+            let textPara = document.createElement('p');
+            textPara.style.margin = "8px 0";
+            textPara.style.color = "#444";
+            textPara.style.fontSize = "15px";
+            textPara.textContent = review.text;
+
+            let dateDiv = document.createElement('div');
+            dateDiv.style.fontSize = "12px";
+            dateDiv.style.color = "#999";
+            dateDiv.textContent = review.date || "Только что";
+
+            // Собираем
+            card.appendChild(strongName);
+            card.appendChild(textPara);
+            card.appendChild(dateDiv);
+            
+            list.appendChild(card);
+        });
+    } else {
+        list.innerHTML = '<p style="color: #999; text-align: center; padding: 20px;">Пока нет отзывов. Будь первым! ✍️</p>';
+    }
+}
+
+// 2. Функция отправки
 function submitReview() {
-    // Получаем значения из полей ввода
     const nameInput = document.getElementById('reviewName');
     const textInput = document.getElementById('reviewText');
 
     const name = nameInput.value.trim();
     const text = textInput.value.trim();
 
-    // Проверка на пустые поля
     if (name === "" || text === "") {
-        alert("⚠️ Пожалуйста, заполните имя и текст отзыва!");
+        alert("⚠️ Заполни имя и текст!");
         return;
     }
 
-    // Отправляем данные в базу данных Firebase
-    reviewsRef.push({
+    // Создаём объект отзыва
+    const newReview = {
         name: name,
         text: text,
-        timestamp: Date.now()
-    })
-    .then(() => {
-        // Если всё успешно — очищаем поля и радуемся
-        nameInput.value = '';
-        textInput.value = '';
-        alert("✅ Спасибо! Отзыв сохранён в облачной базе данных!");
-    })
-    .catch((error) => {
-        alert("❌ Ошибка при сохранении: " + error.message);
-    });
-}
+        date: new Date().toLocaleDateString('ru-RU')
+    };
 
-// 2. Функция загрузки отзывов (она сработает сама при открытии страницы)
-function loadReviews() {
-    const list = document.getElementById('reviewsList');
-    
-    // Слушаем изменения в базе данных
-    reviewsRef.on('value', (snapshot) => {
-        const data = snapshot.val();
-        list.innerHTML = ''; // Очищаем список перед загрузкой
-
-        if (data) {
-            // Превращаем объект в массив и переворачиваем (чтобы новые были сверху)
-            const reviewsArray = Object.values(data).reverse();
-            
-            reviewsArray.forEach(review => {
-                // Создаём карточку отзыва
-                const card = document.createElement('div');
-                card.style.cssText = 
-                    background: #f8f9fa; 
-                    padding: 15px; 
-                    border-radius: 10px; 
-                    border-left: 4px solid #3498db; 
-                    margin-bottom: 12px;
-                    text-align: left;
-                ;
-                
-                // Форматируем дату
-                let dateStr = "Только что";
-                if (review.timestamp) {
-                    const date = new Date(review.timestamp);
-                    dateStr = date.toLocaleDateString('ru-RU') + ' ' + date.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
-                }
-
-                card.innerHTML = 
-                    <strong style="color: #2c3e50; font-size: 16px;">${review.name}</strong>
-                    <p style="margin: 8px 0; color: #444; font-size: 15px;">${review.text}</p>
-                    <div style="font-size: 12px; color: #999;">${dateStr}</div>
-                ;
-                
-                list.appendChild(card);
-            });
-        } else {
-            list.innerHTML = '<p style="color: #999; text-align: center; padding: 20px;">Пока нет отзывов. Будь первым! ✍️</p>';
+    // Сохраняем в браузер
+    let reviews = [];
+    const stored = localStorage.getItem('dsdfeels_reviews');
+    if (stored) {
+        try {
+            reviews = JSON.parse(stored);
+        } catch (e) {
+            reviews = [];
         }
-    });
+    }
+    
+    reviews.push(newReview);
+    localStorage.setItem('dsdfeels_reviews', JSON.stringify(reviews));
+
+    // Очищаем поля
+    nameInput.value = '';
+    textInput.value = '';
+
+    alert("✅ Отзыв сохранён!");
+    
+    // Перезагружаем список без перезагрузки страницы
+    loadReviews();
 }
 
-// 3. Запускаем загрузку отзывов, как только страница загрузится
+// 3. Загружаем при старте
 document.addEventListener('DOMContentLoaded', loadReviews);
