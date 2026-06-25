@@ -24,6 +24,7 @@ console.log("Готов к новым проектам!");
 
 // 1. Загружаем отзывы при открытии
 function loadReviews() {
+    const SCRIPT_URL = "https://script.google.com/macros/s/https://script.google.com/macros/s/AKfycbyB1y1rP_QHmtcpdDEbfvT8QNTNO-XgbEfy0G6rFB4gsbdgd4xy2wLlsoGzZoLSHTY8Bg/exec/exec";
     const list = document.getElementById('reviewsList');
     list.innerHTML = ''; // Очищаем
 
@@ -81,7 +82,7 @@ function loadReviews() {
     }
 }
 
-// 2. Функция отправки
+// 1. Функция отправки отзыва
 function submitReview() {
     const nameInput = document.getElementById('reviewName');
     const textInput = document.getElementById('reviewText');
@@ -94,36 +95,37 @@ function submitReview() {
         return;
     }
 
-    // Создаём объект отзыва
-    const newReview = {
-        name: name,
-        text: text,
-        date: new Date().toLocaleDateString('ru-RU')
-    };
+    // Показываем, что отправляем
+    const btn = document.querySelector('button[onclick="submitReview()"]');
+    const originalText = btn.textContent;
+    btn.textContent = "⏳ Отправка...";
+    btn.disabled = true;
 
-    // Сохраняем в браузер
-    let reviews = [];
-    const stored = localStorage.getItem('dsdfeels_reviews');
-    if (stored) {
-        try {
-            reviews = JSON.parse(stored);
-        } catch (e) {
-            reviews = [];
-        }
-    }
-    
-    reviews.push(newReview);
-    localStorage.setItem('dsdfeels_reviews', JSON.stringify(reviews));
-
-    // Очищаем поля
-    nameInput.value = '';
-    textInput.value = '';
-
-    alert("✅ Отзыв сохранён!");
-    
-    // Перезагружаем список без перезагрузки страницы
-    loadReviews();
+    // Отправляем данные в Google Sheets
+    fetch(SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            name: name,
+            text: text
+        })
+    })
+    .then(() => {
+        // ВОТ ТУТ ПОЯВЛЯЕТСЯ ОКОШКО!
+        alert("✅ Отзыв успешно отправлен в таблицу!");
+        
+        nameInput.value = '';
+        textInput.value = '';
+        loadReviews(); // Обновить список
+    })
+    .catch((error) => {
+        alert("❌ Ошибка: " + error.message);
+    })
+    .finally(() => {
+        btn.textContent = originalText;
+        btn.disabled = false;
+    });
 }
-
-// 3. Загружаем при старте
-document.addEventListener('DOMContentLoaded', loadReviews);
