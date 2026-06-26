@@ -1,0 +1,134 @@
+
+        /* --- ЭТО CSS (КРАСОТА) --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364); /* КРАСИВЫЙ ТЁМНЫЙ ГРАДИЕНТ */
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            width: 100%;
+            max-width: 450px;
+            padding: 40px 30px;
+            border-radius: 25px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        /* Эффект при наведении на карточку */
+        .card:hover {
+            transform: translateY(-10px);
+        }
+
+        .avatar {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid #2c5364;
+            margin-bottom: 15px;
+        }
+
+        h1 {
+            color: #1a2a3a;
+            font-size: 26px;
+            margin-bottom: 5px;
+        }
+
+        .subtitle {
+            color: #2c5364;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .info-list {
+            text-align: left;
+            background: #f0f4f8;
+            padding: 15px 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+            list-style: none;
+        }
+
+        .info-list li {
+            padding: 8px 0;
+            color: #333;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .info-list li:last-child {
+            border-bottom: none;
+        }
+
+        .goals {
+            background: #eaf2f8;
+            padding: 15px 20px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            text-align: left;
+        }
+
+        .goals h3 {
+            color: #1a2a3a;
+            margin-bottom: 10px;
+        }
+
+        .goals ul {
+            padding-left: 20px;
+            color: #444;
+        }
+
+        .goals ul li {
+            margin: 5px 0;
+        }
+
+        .btn-telegram {
+            display: inline-block;
+            background: linear-gradient(90deg, #0088cc, #00acee);
+            color: white;
+            padding: 14px 30px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0, 136, 204, 0.4);
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-bottom: 15px;
+        }
+
+        .btn-telegram:hover {
+            transform: scale(1.03);
+            box-shadow: 0 6px 20px rgba(0, 136, 204, 0.6);
+        }
+
+        .footer-text {
+            font-size: 14px;
+            color: #666;
+            margin-top: 10px;
+        }
+
+        .footer-text a {
+            color: #0088cc;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .footer-text a:hover {
+            text-decoration: underline;
+        }
