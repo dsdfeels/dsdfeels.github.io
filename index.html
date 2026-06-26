@@ -1,200 +1,219 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="ru" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="favicon.ico">
     <title>Солтан Александр | Портфолио</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
-    <!-- Подключаем CSS -->
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
-<!-- БАННЕР ОБНОВЛЕНИЯ -->
-<div id="update-banner" style="position: fixed; top: 0; left: 0; width: 100%; background: linear-gradient(90deg, #e67e22, #f1c40f); color: #1a252f; text-align: center; padding: 12px 20px; font-weight: bold; font-size: 18px; z-index: 10000; box-shadow: 0 4px 15px rgba(0,0,0,0.2); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
-    <span>🚧 Ведётся обновление сайта! Новая версия уже скоро.</span>
-    <button onclick="document.getElementById('update-banner').style.display='none'" style="background: #1a252f; color: white; border: none; padding: 5px 15px; border-radius: 20px; cursor: pointer; font-size: 14px; font-weight: bold;">
-        ✕ Закрыть
-    </button>
-</div>
-    <nav class="navbar">
-        <div class="logo">DsDfeels</div>
-        <ul class="nav-links">
-            <li><a href="#about">Главная</a></li>
-            <li><a href="#goals">Цели</a></li>
-            <li><a href="#portfolio">Портфолио</a></li>
-            <li><a href="#contacts">Контакты</a></li>
-        </ul>
-    </nav>
 
-    <div class="container">
-
-        <section id="about">
-            <div class="profile-img-wrapper">
-                <img src="ava2.jpg" alt="Моё фото" class="profile-img">
-            </div>
-            <div class="about-text">
-                <h1>Солтан Александр</h1>
-                <span class="location-badge">📍 Симферополь, Крым</span>
-                <p>👋 Всем привет! Я студент 3 курса. Учусь веб-разработке,дизайну и мечтаю создавать крутые сайты и приложения.</p>
-                <div class="social-links">
-                    <a href="#contacts" class="btn-primary">✉️ Связаться</a>
-                    <a href="https://vk.ru/gottagetatriiiip" target="_blank" class="btn-outline">✈️ VK</a>
-                </div>
-            </div>
-        </section>
-
-        <section id="goals">
-            <h2>Мои цели</h2>
-            <div class="divider"></div>
-            <div class="goals-grid">
-                <div class="goal-item"><h3>💻 Программирование</h3><p>Освоить JavaScript и React. Также дизайн :) </p></div>
-                <div class="goal-item"><h3>🚀 Работа</h3><p>Найти стажировку в IT и начать зарабатывать.</p></div>
-                <div class="goal-item"><h3>💪 Здоровье</h3><p>Бросить курить и заняться спортом.</p></div>
-                <div class="goal-item"><h3>🏡 Жизнь</h3><p>Порядок в голове и самореализация.</p></div>
-            </div>
-        </section>
-
-        <section id="portfolio">
-            <h2>Мои работы</h2>
-            <div class="divider"></div>
-            <div class="portfolio-grid">
-                <div class="portfolio-card">
-                    <img src="Проект 1 фуллэ.png" alt="Проект 1">
-                    <div class="portfolio-card-content">
-                        <h3>Моя первая визитка</h3>
-                        <p>Сайт с тёмной темой и модальным окном.</p>
-                        <span class="tag">HTML</span>
-                        <span class="tag">CSS</span>
-                        <span class="tag">JS</span>
-                    </div>
-                </div>
-                <div class="portfolio-card">
-                    <img src="Змейка1.png" alt="Проект 2">
-                    <div class="portfolio-card-content">
-                        <h3>Игра-змейка</h3>
-                        <p>Веб игрушка с анимацией и звуком</p>
-                        <span class="tag">демо</span>
-                        <span class="tag">игра</span>
-                        <span class="tag">HTML</span>
-                    </div>
-                </div>
-                 <div class="portfolio-card">
-                    <img src="скоро.jpg" alt="Будущий проект">
-                    <div class="portfolio-card-content">
-                        <h3>Следующий проект</h3>
-                        <p>Пока делаю, скоро будет крутой проект!</p>
-                        <span class="tag">В разработке</span>
-                    </div>
-                </div>
-            </div>
-        </section>
-<!-- НОВЫЙ БЛОК: ОТЗЫВЫ И БЛОГ -->
-<section id="blog" style="background: white; padding: 40px; border-radius: 20px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); margin-bottom: 60px;">
-    <h2>Мои мысли и отзывы</h2>
-    <div class="divider"></div>
-
-    <!-- Вдохновляющая цитата -->
-    <div style="background: #f8f9fa; padding: 20px; border-radius: 15px; text-align: center; font-style: italic; font-size: 18px; margin-bottom: 30px; border-left: 4px solid #3498db;">
-        💭 "Я отведу тебя туда, где ты никогда не был."
-        <div style="margin-top: 10px; font-size: 14px; font-style: normal; color: #777;">— Билли Херингтон, 2007 </div>
-    </div>
-
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
-        
-        <!-- Карточка отзыва -->
-        <div style="background: #f8f9fa; padding: 20px; border-radius: 15px;">
-            <p style="font-size: 16px;">"Эта цитата вдохновляет на самом деле , пусть будет."</p>
-            <div style="margin-top: 15px; font-weight: bold; color: #2c3e50;">— Александр</div>
-            <div style="font-size: 13px; color: #888;">(Автор)</div>
+    <!-- Шапка (Навигация) -->
+    <header class="navbar">
+        <div class="logo">DsDfeels<span class="dot">Home</span></div>
+        <nav class="nav-links">
+            <a href="#home" class="active">Главная</a>
+            <a href="#skills">Навыки</a>
+            <a href="#music">Музыка</a>
+            <a href="#projects">Проекты</a>
+            <a href="#dreams">Мысли</a>
+            <a href="#contact">Контакты</a>
+        </nav>
+        <div class="theme-toggle">
+            <i class="fas fa-moon" id="themeIcon"></i>
         </div>
+    </header>
 
-        <!-- Заметка из блога -->
-        <div style="background: #f8f9fa; padding: 20px; border-radius: 15px;">
-            <h3 style="margin-bottom: 10px; font-size: 18px; color: #2c3e50;">📝 День 1: Первый шаг</h3>
-            <p style="font-size: 15px;">Сегодня я наконец перестал тупить и начал кодить. В итоге за один вечер сделал сайт. Я понял, что главное — просто начать.</p>
-            <div style="margin-top: 10px; font-size: 13px; color: #888;">#прогресс #кодинг #мотивация</div>
+    <!-- Главный экран -->
+ <!-- Секция Главная -->
+<section id="home" class="hero">
+    <div class="hero-content">
+        <div class="hero-left">
+            <div class="profile-wrapper">
+                <div class="avatar-glow"></div>
+                <img src="Ava3.jpg" alt="Солтан Александр" class="hero-avatar">
+            </div>
+            <div class="social-icons">
+                <a href="https://t.me/yazukuin" target="_blank" title="Telegram"><i class="fab fa-telegram-plane"></i></a>
+                <a href="mailto:dsdfeels@gmail.com" title="Email"><i class="fas fa-envelope"></i></a>
+                <a href="https://github.com/dsdfeels" target="_blank" title="GitHub"><i class="fab fa-github"></i></a>
+            </div>
         </div>
-
-    </div>
-
-    <!-- Призыв к действию для будущих клиентов -->
-    <div style="margin-top: 30px; text-align: center; background: #eaf2f8; padding: 20px; border-radius: 15px;">
-        <p style="font-weight: bold; color: #2c3e50;">Хочешь оставить свой отзыв или предложить тему для блога?</p>
-        <a href="mailto:dsdfeels@gmail.com" style="color: #3498db; font-weight: bold;">Напиши мне на почту ✉️</a>
+        <div class="hero-right">
+            <h1 class="hero-title">Солтан Александр</h1>
+            <p class="hero-subtitle">Веб-разработчик и создатель цифровых решений</p>
+            <p class="hero-desc">
+                Я создаю современные, быстрые и красивые веб-интерфейсы. 
+                Мой стек: HTML, CSS, JavaScript, а также работа с данными через API.
+            </p>
+            <div class="hero-buttons">
+                <a href="#contact" class="btn primary-btn">Связаться</a>
+                <a href="#" class="btn secondary-btn">Скачать резюме</a>
+            </div>
+        </div>
     </div>
 </section>
-        <section id="contacts">
-            <h2>Свяжись со мной</h2>
-            <div class="divider" style="background: white; margin-bottom: 15px;"></div>
-            <p style="margin-bottom: 20px;">Всегда открыт к предложениям!</p>
-            <div class="contacts-links">
-                <a href="https://vk.ru/gottagetatriiiip" target="_blank">✈️ VK</a>
-                <a href="mailto:dsdfeels@gmail.com">📧 dsdfeels@gmail.com</a>
+        <div class="hero-visual">
+            <div class="code-block">
+                <span class="line">&lt;h1&gt;Йоу менчики!&lt;/h1&gt;</span>
+                <span class="line"><span class="keyword">let</span> success = <span class="string">true</span>;</span>
+                <span class="line"><span class="comment">// Как ваше ничего?</span></span>
             </div>
-        </section>
-
-    </div>
-<!-- НОВЫЙ БЛОК СТАТИСТИКИ -->
-<section id="stats" style="background: white; padding: 40px; border-radius: 20px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); margin-bottom: 40px;">
-    <h2>📊 Статистика отзывов</h2>
-    <div class="divider"></div>
-    
-    <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 30px; align-items: center;">
-        <!-- Круглая диаграмма -->
-        <div style="width: 300px; height: 300px;">
-            <canvas id="ratingChart"></canvas>
         </div>
-        
-        <!-- Текстовые данные -->
-        <div style="min-width: 200px;">
-            <p style="font-size: 18px; font-weight: bold;">⭐ Общий рейтинг: <span id="avgRating" style="color: #3498db;">0.0</span></p>
-            <p>📝 Всего отзывов: <span id="totalReviews" style="color: #3498db; font-weight: bold;">0</span></p>
+    </section>
+
+    <!-- Навыки -->
+<section id="skills" class="section">
+    <h2 class="section-title">Мои навыки</h2>
+    <div class="divider"></div>
+    <div class="skills-grid">
+        <div class="skill-card">
+            <i class="fab fa-html5 skill-icon" style="color: #e34f26;"></i>
+            <h3>HTML5</h3>
+            <div class="progress-bar"><div class="progress" style="width: 90%;"></div></div>
+        </div>
+        <div class="skill-card">
+            <i class="fab fa-css3-alt skill-icon" style="color: #1572b6;"></i>
+            <h3>CSS3</h3>
+            <div class="progress-bar"><div class="progress" style="width: 85%;"></div></div>
+        </div>
+        <div class="skill-card">
+            <i class="fab fa-js skill-icon" style="color: #f7df1e;"></i>
+            <h3>JavaScript</h3>
+            <div class="progress-bar"><div class="progress" style="width: 65%;"></div></div>
+        </div>
+        <div class="skill-card">
+            <i class="fab fa-react skill-icon" style="color: #61dafb;"></i>
+            <h3>React (в изучении)</h3>
+            <div class="progress-bar"><div class="progress" style="width: 30%;"></div></div>
         </div>
     </div>
 </section>
 
-
-    <!-- СИСТЕМА ОТЗЫВОВ (Локальная версия) -->
-<section id="reviews" style="background: white; padding: 40px; border-radius: 20px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); margin-bottom: 60px;">
-    <h2>📝 Оставь свой отзыв</h2>
+<!-- МУЗЫКА НЕДЕЛИ (НОВАЯ ПРОСТАЯ ВЕРСИЯ) -->
+<section id="music" class="section music-section">
+    <h2 class="section-title">🎵 Музыка недели</h2>
     <div class="divider"></div>
     
-    <div style="display: flex; flex-direction: column; gap: 20px; max-width: 600px; margin: 0 auto;">
-        
-        <!-- Поле ввода имени -->
-        <input type="text" id="reviewName" placeholder="Ваше имя" style="padding: 12px; border-radius: 10px; border: 1px solid #ddd; font-size: 16px;">
-        
-        <!-- Поле ввода текста -->
-        <textarea id="reviewText" placeholder="Напишите, что думаете о моём сайте..." rows="4" style="padding: 12px; border-radius: 10px; border: 1px solid #ddd; font-size: 16px; resize: vertical;"></textarea>
-        
-        <!-- Кнопка отправки -->
-     <button onclick="submitReview()" style="padding: 12px; background: #3498db; color: white; border: none; border-radius: 10px; font-size: 18px; cursor: pointer; font-weight: bold;">
-    💬 Оставить отзыв
-</button>
-        
-        <!-- Список отзывов -->
-        <div id="reviewsList" style="margin-top: 30px; display: flex; flex-direction: column; gap: 15px;"></div>
+    <div style="text-align: center; display: flex; flex-direction: column; align-items: center; gap: 15px;">
+        <img src="f1.jpg" alt="Обложка" style="width: 150px; height: 150px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
+        <h3 id="trackTitle">Sometimes</h3>
+        <div style="display: flex; gap: 20px; align-items: center;">
+            <button onclick="playMusic()" style="background: #3b82f6; color: white; border: none; padding: 12px 30px; border-radius: 30px; font-size: 18px; cursor: pointer;">▶️ Играть</button>
+            <button onclick="pauseMusic()" style="background: transparent; border: 2px solid #3b82f6; color: #3b82f6; padding: 12px 30px; border-radius: 30px; font-size: 18px; cursor: pointer;">⏸️ Пауза</button>
+        </div>
+        <div style="width: 100%; max-width: 300px; height: 6px; background: #1e293b; border-radius: 3px; overflow: hidden; margin-top: 10px;">
+            <div id="progressFill" style="height: 100%; background: #3b82f6; width: 0%; transition: width 0.1s linear;"></div>
+        </div>
+        <div style="font-size: 14px; color: #94a3b8;">Трек: <span id="currentTime">0:00</span> / <span id="totalDuration">0:00</span></div>
     </div>
-</section>
-    <footer>&copy; 2026 Солтан Александр. Сделано с нуля.</footer>
-</script>
-    <!-- Подключаем JS -->
-    <script src="script.js"></script>
-    <!-- МУЗЫКАЛЬНЫЙ ПЛЕЕР -->
-<div id="music-player" style="position: fixed; bottom: 20px; right: 20px; z-index: 9999; display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.9); padding: 10px 15px; border-radius: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
-    
-    <!-- Кнопка включения/выключения -->
-    <button id="musicToggle" onclick="toggleMusic()" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #3498db;">
-        🔇
-    </button>
 
-    <!-- Сам аудио-плеер (скрытый) -->
-    <audio id="bgMusic" loop style="display: none;">
-        <source src="Castanets - You Are The Blood.mp3" type="audio/mpeg">
-        Твой браузер не поддерживает аудио.
+    <audio id="weeklyMusic" loop style="display: none;">
+        <source src="m2.mp3" type="audio/mpeg">
     </audio>
-</div>
+</section>
+
+    <!-- Проекты -->
+<section id="projects" class="section">
+    <h2 class="section-title">Мои проекты</h2>
+    <div class="divider"></div>
+    <div class="projects-grid">
+        <div class="project-card">
+            <div class="project-img" style="background: #2c3e50; height: 200px; display: flex; align-items: center; justify-content: center; color: white; font-size: 24px;">🖥️ Визитка</div>
+            <div class="project-info">
+                <h3>Первая визитка</h3>
+                <p>Сайт-портфолио с тёмной темой и системами отзывов.</p>
+                <div class="project-tags">
+                    <span>HTML</span><span>CSS</span><span>JS</span>
+                </div>
+            </div>
+        </div>
+        <div class="project-card">
+            <div class="project-img" style="background: #1a252f; height: 200px; display: flex; align-items: center; justify-content: center; color: #00e5ff; font-size: 24px;">🐍 Змейка</div>
+            <div class="project-info">
+                <h3>Змейка: DsDfeels</h3>
+                <p>Классическая игра на чистом JS с неоновым дизайном и рекордами.</p>
+                <div class="project-tags">
+                    <span>Game</span><span>JS</span><span>Canvas</span>
+                </div>
+            </div>
+        </div>
+        <div class="project-card">
+            <div class="project-img" style="background: linear-gradient(135deg, #667eea, #764ba2); height: 200px; display: flex; align-items: center; justify-content: center; color: white; font-size: 24px;">🚀 Скоро</div>
+            <div class="project-info">
+                <h3>Новый проект</h3>
+                <p>Полноценный веб-сервис. В разработке. Следите за обновлениями!</p>
+                <div class="project-tags">
+                    <span>API</span><span>React</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="thoughts" class="section">
+    <h2 class="section-title">Мои мысли</h2>
+    <div class="divider"></div>
+    <div class="thoughts-grid">
+        <div class="thought-card">
+            <div class="thought-date">26.06.2026</div>
+            <h3>Почему я выбрал веб-разработку</h3>
+            <p>Мне нравится создавать что-то, что работает и приносит пользу. Каждая строчка кода — это решение задачи.</p>
+        </div>
+        <div class="thought-card">
+            <div class="thought-date">25.06.2026</div>
+            <h3>Мой первый сайт</h3>
+            <p>Сегодня я запустил свой первый сайт на GitHub. Это был сложный, но невероятно крутой опыт.</p>
+        </div>
+        <div class="thought-card">
+            <div class="thought-date">В планах</div>
+            <h3>Что я хочу изучить следующим</h3>
+            <p>React, базы данных, и как создавать приложения, которые помогают людям.</p>
+        </div>
+    </div>
+</section>
+
+<!-- Цитата недели -->
+<section id="quote" class="section quote-section">
+    <h2 class="section-title">Цитата недели</h2>
+    <div class="divider"></div>
+    <div class="quote-container">
+        <div class="quote-text">
+            <i class="fas fa-quote-left quote-icon"></i>
+            <p id="weeklyQuote">"Я не тот, кем был вчера. Я тот, кем становлюсь сегодня."</p>
+            <i class="fas fa-quote-right quote-icon"></i>
+        </div>
+        <p class="quote-author" id="quoteAuthor">— Солтан Александр</p>
+        <button class="btn secondary-btn quote-btn" onclick="changeQuote()">🔄 Обновить цитату</button>
+    </div>
+</section>
+
+    <!-- Контакты -->
+    <section id="contact" class="section contact-section">
+        <h2 class="section-title">Свяжись со мной</h2>
+        <div class="divider"></div>
+        <div class="contact-content">
+            <div class="contact-links">
+                <a href="mailto:dsdfeels@gmail.com"><i class="fas fa-envelope"></i> dsdfeels@gmail.com</a>
+                <a href="https://t.me/yazukuin"><i class="fab fa-telegram-plane"></i> Telegram</a>
+                <a href="#"><i class="fab fa-github"></i> GitHub</a>
+            </div>
+            <form id="contactForm" class="contact-form">
+                <input type="text" placeholder="Ваше имя" required>
+                <input type="email" placeholder="Ваш Email" required>
+                <textarea placeholder="Сообщение" rows="4" required></textarea>
+                <button type="submit" class="btn primary-btn">Отправить</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Подвал -->
+    <footer>
+        <p>&copy; 2026 Солтан Александр. Сделано с нуля.</p>
+    </footer>
+
+    <script src="script.js"></script>
 </body>
 </html>
