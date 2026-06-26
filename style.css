@@ -73,3 +73,34 @@ footer { text-align: center; padding: 30px; color: #888; font-size: 14px; }
     .about-text { text-align: center; }
     .social-links { justify-content: center; }
 }
+/* Баннер обновления */
+#update-banner {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background: linear-gradient(90deg, #e67e22, #f1c40f);
+    color: #1a252f;
+    text-align: center;
+    padding: 12px 20px;
+    font-weight: bold;
+    font-size: 18px;
+    z-index: 10000;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+#update-banner button {
+    background: #1a252f;
+    color: white;
+    border: none;
+    padding: 5px 15px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+}

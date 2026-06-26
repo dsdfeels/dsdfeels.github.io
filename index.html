@@ -5,12 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="favicon.ico">
     <title>Солтан Александр | Портфолио</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <!-- Подключаем CSS -->
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
+<!-- БАННЕР ОБНОВЛЕНИЯ -->
+<div id="update-banner" style="position: fixed; top: 0; left: 0; width: 100%; background: linear-gradient(90deg, #e67e22, #f1c40f); color: #1a252f; text-align: center; padding: 12px 20px; font-weight: bold; font-size: 18px; z-index: 10000; box-shadow: 0 4px 15px rgba(0,0,0,0.2); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+    <span>🚧 Ведётся обновление сайта! Новая версия уже скоро.</span>
+    <button onclick="document.getElementById('update-banner').style.display='none'" style="background: #1a252f; color: white; border: none; padding: 5px 15px; border-radius: 20px; cursor: pointer; font-size: 14px; font-weight: bold;">
+        ✕ Закрыть
+    </button>
+</div>
     <nav class="navbar">
         <div class="logo">DsDfeels</div>
         <ul class="nav-links">
@@ -64,6 +71,16 @@
                     </div>
                 </div>
                 <div class="portfolio-card">
+                    <img src="Змейка1.png" alt="Проект 2">
+                    <div class="portfolio-card-content">
+                        <h3>Игра-змейка</h3>
+                        <p>Веб игрушка с анимацией и звуком</p>
+                        <span class="tag">демо</span>
+                        <span class="tag">игра</span>
+                        <span class="tag">HTML</span>
+                    </div>
+                </div>
+                 <div class="portfolio-card">
                     <img src="скоро.jpg" alt="Будущий проект">
                     <div class="portfolio-card-content">
                         <h3>Следующий проект</h3>
@@ -119,7 +136,27 @@
         </section>
 
     </div>
-<!-- СИСТЕМА ОТЗЫВОВ (Локальная версия) -->
+<!-- НОВЫЙ БЛОК СТАТИСТИКИ -->
+<section id="stats" style="background: white; padding: 40px; border-radius: 20px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); margin-bottom: 40px;">
+    <h2>📊 Статистика отзывов</h2>
+    <div class="divider"></div>
+    
+    <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 30px; align-items: center;">
+        <!-- Круглая диаграмма -->
+        <div style="width: 300px; height: 300px;">
+            <canvas id="ratingChart"></canvas>
+        </div>
+        
+        <!-- Текстовые данные -->
+        <div style="min-width: 200px;">
+            <p style="font-size: 18px; font-weight: bold;">⭐ Общий рейтинг: <span id="avgRating" style="color: #3498db;">0.0</span></p>
+            <p>📝 Всего отзывов: <span id="totalReviews" style="color: #3498db; font-weight: bold;">0</span></p>
+        </div>
+    </div>
+</section>
+
+
+    <!-- СИСТЕМА ОТЗЫВОВ (Локальная версия) -->
 <section id="reviews" style="background: white; padding: 40px; border-radius: 20px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); margin-bottom: 60px;">
     <h2>📝 Оставь свой отзыв</h2>
     <div class="divider"></div>
@@ -145,5 +182,19 @@
 </script>
     <!-- Подключаем JS -->
     <script src="script.js"></script>
+    <!-- МУЗЫКАЛЬНЫЙ ПЛЕЕР -->
+<div id="music-player" style="position: fixed; bottom: 20px; right: 20px; z-index: 9999; display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.9); padding: 10px 15px; border-radius: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+    
+    <!-- Кнопка включения/выключения -->
+    <button id="musicToggle" onclick="toggleMusic()" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #3498db;">
+        🔇
+    </button>
+
+    <!-- Сам аудио-плеер (скрытый) -->
+    <audio id="bgMusic" loop style="display: none;">
+        <source src="Castanets - You Are The Blood.mp3" type="audio/mpeg">
+        Твой браузер не поддерживает аудио.
+    </audio>
+</div>
 </body>
 </html>
