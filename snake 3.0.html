@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🐍 REPTILIA | Супер-Змейка</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-body: #0a0a0a;
+            --bg-card: #111111;
+            --border: #2a2a2a;
+            --text-main: #f0f0f0;
+            --text-muted: #888;
+            --accent: #e60000;
+            --accent-dim: rgba(230, 0, 0, 0.2);
+            --accent-glow: rgba(230, 0, 0, 0.4);
+            --shadow: 0 12px 40px rgba(0, 0, 0, 0.8);
+            --radius: 20px;
+            --transition: 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        [data-theme="light"] {
+            --bg-body: #f4f4f9;
+            --bg-card: #ffffff;
+            --border: #d0d0d8;
+            --text-main: #0a0a0a;
+            --text-muted: #555;
+            --accent: #e60000;
+            --accent-dim: rgba(230, 0, 0, 0.2);
+            --accent-glow: rgba(230, 0, 0, 0.4);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--bg-body);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+            position: fixed;
+            top: 0;
+            left: 0;
+        }
+
+        /* Главный контейнер игры */
+        .game-container {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 30px;
+            max-width: 1000px;
+            width: 100%;
+            padding: 20px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .game-container:hover {
+            border-color: var(--accent);
+            box-shadow: 0 0 40px var(--accent-glow);
+        }
+
+        /* --- ЛЕВАЯ ЧАСТЬ: ИГРА --- */
+        .game-left {
+            flex: 2;
+            min-width: 320px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .header {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .header h1 {
+            font-size: 22px;
+            font-weight: 800;
+            letter-spacing: 1px;
+        }
+        .header h1 span { color: var(--accent); }
+
+        .stats-top {
+            display: flex;
+            gap: 15px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        .stats-top span { color: var(--accent); }
+
+        canvas {
+            background: #0d0d0d;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 460px;
+            aspect-ratio: 1 / 1;
+            border: 1px solid var(--border);
+            box-shadow: inset 0 0 30px rgba(0,0,0,0.5);
+        }
+
+        .scoreboard {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            margin: 12px 0 8px;
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+        .scoreboard span { color: var(--text-main); font-weight: 700; }
+
+        /* --- ПРАВАЯ ЧАСТЬ: БОКОВАЯ ПАНЕЛЬ --- */
+        .game-right {
+            flex: 1;
+            min-width: 200px;
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            gap: 16px;
+            padding-left: 10px;
+            border-left: 1px solid var(--border);
+        }
+
+        .panel-title {
+            font-size: 13px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 14px;
+        }
+        .stat-item:last-child {
+            border-bottom: none;
+        }
+        .stat-item span:first-child { color: var(--text-muted); }
+        .stat-item span:last-child { color: var(--text-main); font-weight: 700; }
+
+        .controls {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .dpad {
+            display: grid;
+            grid-template-columns: repeat(3, 50px);
+            grid-template-rows: repeat(3, 50px);
+            gap: 5px;
+            justify-content: center;
+        }
+
+        .dpad button {
+            border: none;
+            border-radius: 10px;
+            background: var(--bg-body);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            font-size: 20px;
+            cursor: pointer;
+            transition: 0.15s;
+        }
+        .dpad button:active {
+            transform: scale(0.9);
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+        .dpad .center {
+            background: transparent;
+            border: none;
+            cursor: default;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 40px;
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-primary {
+            background: var(--accent);
+            color: #fff;
+            box-shadow: 0 4px 20px var(--accent-glow);
+        }
+        .btn-primary:hover {
+            transform: scale(1.04);
+        }
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+        }
+        .btn-outline:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        /* Таблица лидеров */
+        .leaderboard {
+            width: 100%;
+            padding: 12px;
+            background: var(--bg-body);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            text-align: left;
+        }
+        .leaderboard h4 {
+            text-align: center;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            font-weight: 400;
+            letter-spacing: 1px;
+        }
+        .leaderboard ol {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .leaderboard ol li {
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 8px;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+        .leaderboard ol li:last-child {
+            border-bottom: none;
+        }
+        .leaderboard ol li span {
+            color: var(--text-main);
+            font-weight: 600;
+        }
+        .leaderboard ol::-webkit-scrollbar {
+            width: 4px;
+        }
+        .leaderboard ol::-webkit-scrollbar-thumb {
+            background: var(--accent);
+            border-radius: 4px;
+        }
+
+        .back-button {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            padding: 12px 24px;
+            border-radius: 40px;
+            color: var(--text-main);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 15px;
+            transition: var(--transition);
+            box-shadow: var(--shadow);
+        }
+        .back-button:hover {
+            border-color: var(--accent);
+            background: var(--accent-dim);
+            color: var(--accent);
+            transform: translateY(-3px);
+        }
+        .back-button i {
+            font-size: 18px;
+        }
+
+        .level-badge {
+            position: absolute;
+            top: 14px;
+            right: 14px;
+            background: var(--bg-body);
+            border: 1px solid var(--border);
+            border-radius: 40px;
+            padding: 3px 14px;
+            font-size: 13px;
+            color: var(--text-muted);
+            pointer-events: none;
+            z-index: 5;
+        }
+        .level-badge span { color: var(--accent); }
+
+        .game-over-overlay {
+            display: none;
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(4px);
+            border-radius: var(--radius);
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 12px;
+            z-index: 10;
+        }
+        .game-over-overlay.active {
+            display: flex;
+        }
+        .game-over-overlay h2 {
+            font-size: 32px;
+            color: var(--accent);
+        }
+        .game-over-overlay p {
+            color: var(--text-muted);
+            font-size: 18px;
+        }
+
+        @media (max-width: 700px) {
+            .game-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            .game-right {
+                border-left: none;
+                border-top: 1px solid var(--border);
+                padding-left: 0;
+                padding-top: 16px;
+                width: 100%;
+            }
+            .back-button {
+                bottom: 10px;
+                left: 10px;
+                padding: 8px 16px;
+                font-size: 13px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <a href="index.html" class="back-button">
+        <i class="fas fa-arrow-left"></i>
+        Вернуться в портфолио
+    </a>
+
+    <div class="game-container">
+        <!-- ЛЕВАЯ ЧАСТЬ -->
+        <div class="game-left">
+            <div class="header">
+                <h1>REPTILIA <span>🐍</span></h1>
+                <div class="stats-top">
+                    <div>🏆 <span id="highScoreDisplay">0</span></div>
+                    <div>⏱️ <span id="timerDisplay">0</span></div>
+                </div>
+            </div>
+
+            <canvas id="gameCanvas" width="460" height="460"></canvas>
+
+            <div class="scoreboard">
+                <div>🍎 Счёт: <span id="scoreDisplay">0</span></div>
+                <div>⚡ Уровень: <span id="levelDisplay">1</span></div>
+                <div>🍽️ Съедено: <span id="eatenDisplay">0</span></div>
+            </div>
+        </div>
+
+        <!-- ПРАВАЯ ЧАСТЬ (БОКОВАЯ ПАНЕЛЬ) -->
+        <div class="game-right">
+            <div>
+                <div class="panel-title">📊 Статистика</div>
+                <div class="stat-item"><span>Счёт</span><span id="panelScore">0</span></div>
+                <div class="stat-item"><span>Уровень</span><span id="panelLevel">1</span></div>
+                <div class="stat-item"><span>Съедено</span><span id="panelEaten">0</span></div>
+                <div class="stat-item"><span>Время</span><span id="panelTimer">0</span></div>
+                <div class="stat-item"><span>Рекорд</span><span id="panelHighScore">0</span></div>
+            </div>
+
+            <div class="controls">
+                <div class="dpad">
+                    <div></div>
+                    <button onclick="changeDir('up')">⬆</button>
+                    <div></div>
+                    <button onclick="changeDir('left')">⬅</button>
+                    <div class="center"></div>
+                    <button onclick="changeDir('right')">➡</button>
+                    <div></div>
+                    <button onclick="changeDir('down')">⬇</button>
+                    <div></div>
+                </div>
+                <div class="action-buttons">
+                    <button class="btn btn-outline" onclick="togglePause()">⏸️</button>
+                    <button class="btn btn-primary" onclick="restartGame()">🔄 Заново</button>
+                    <button class="btn btn-outline" onclick="toggleTheme()">🌙</button>
+                </div>
+            </div>
+
+            <div class="leaderboard">
+                <h4>🏅 Топ-10 рекордов</h4>
+                <ol id="leaderboardList">
+                    <li>Пока нет рекордов...</li>
+                </ol>
+            </div>
+        </div>
+
+        <div class="level-badge">⚡ Уровень <span id="levelBadge">1</span></div>
+
+        <div class="game-over-overlay" id="gameOverOverlay">
+            <h2>💀 Смерть</h2>
+            <p>Счёт: <span id="finalScore">0</span></p>
+            <p>⏱️ Время: <span id="finalTime">0</span>с</p>
+            <button class="btn btn-primary" onclick="restartGame()">🔄 Переродиться</button>
+        </div>
+    </div>
+
+    <script>
+        // --- ИГРОВОЙ ДВИЖОК ---
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const scoreDisplay = document.getElementById('scoreDisplay');
+        const highScoreDisplay = document.getElementById('highScoreDisplay');
+        const levelDisplay = document.getElementById('levelDisplay');
+        const levelBadge = document.getElementById('levelBadge');
+        const finalScore = document.getElementById('finalScore');
+        const finalTime = document.getElementById('finalTime');
+        const overlay = document.getElementById('gameOverOverlay');
+        const timerDisplay = document.getElementById('timerDisplay');
+        const eatenDisplay = document.getElementById('eatenDisplay');
+
+        // Панель справа
+        const panelScore = document.getElementById('panelScore');
+        const panelLevel = document.getElementById('panelLevel');
+        const panelEaten = document.getElementById('panelEaten');
+        const panelTimer = document.getElementById('panelTimer');
+        const panelHighScore = document.getElementById('panelHighScore');
+
+        const GRID = 20;
+        const SIZE = canvas.width / GRID;
+
+        let snake = [{ x: 10, y: 10 }];
+        let direction = { x: 0, y: 0 };
+        let food = { x: 15, y: 15 };
+        let goldenFood = null;
+        let score = 0;
+        let highScore = parseInt(localStorage.getItem('reptiliaHighScore')) || 0;
+        let level = 1;
+        let speed = 120;
+        let gameRunning = false;
+        let gameLoop = null;
+        let isPaused = false;
+        let eatenCount = 0;
+        let timer = 0;
+        let timerInterval = null;
+        let combo = 0;
+        let lastEatTime = 0;
+        let matrixMode = false;
+
+        highScoreDisplay.textContent = highScore;
+        panelHighScore.textContent = highScore;
+
+        // --- ЗВУК (Web Audio) ---
+        let audioCtx = null;
+
+        function getAudioCtx() {
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            return audioCtx;
+        }
+
+        function playBeep(freq, duration, type = 'sine', vol = 0.15) {
+            try {
+                const ctx = getAudioCtx();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = type;
+                osc.frequency.value = freq;
+                gain.gain.value = vol;
+                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start();
+                osc.stop(ctx.currentTime + duration);
+            } catch(e) {}
+        }
+
+        function playEatSound() { playBeep(880, 0.08, 'sine', 0.2); }
+        function playGoldenSound() { playBeep(1200, 0.12, 'sine', 0.25); }
+        function playDeathSound() { playBeep(220, 0.3, 'sawtooth', 0.15); }
+        function playLevelUpSound() { playBeep(660, 0.1, 'sine', 0.2); setTimeout(() => playBeep(880, 0.1, 'sine', 0.2), 120); }
+
+        // --- ЦВЕТА ---
+        const snakeColors = ['#e60000', '#ff6600', '#ffcc00', '#00ffcc', '#3b82f6', '#8b5cf6', '#ff00ff'];
+
+        // --- ГЕНЕРАЦИЯ ЕДЫ ---
+        function generateFood() {
+            let newFood;
+            do {
+                newFood = {
+                    x: Math.floor(Math.random() * GRID),
+                    y: Math.floor(Math.random() * GRID)
+                };
+            } while (snake.some(s => s.x === newFood.x && s.y === newFood.y) ||
+                     (goldenFood && goldenFood.x === newFood.x && goldenFood.y === newFood.y));
+            food = newFood;
+        }
+
+        function generateGoldenFood() {
+            if (goldenFood) return;
+            let newGolden;
+            do {
+                newGolden = {
+                    x: Math.floor(Math.random() * GRID),
+                    y: Math.floor(Math.random() * GRID),
+                    timer: 150
+                };
+            } while (snake.some(s => s.x === newGolden.x && s.y === newGolden.y) ||
+                     newGolden.x === food.x && newGolden.y === food.y);
+            goldenFood = newGolden;
+        }
+
+        // --- ОТРИСОВКА ---
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Фон
+            ctx.fillStyle = '#0d0d0d';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            // Сетка
+            ctx.strokeStyle = 'rgba(255,255,255,0.03)';
+            ctx.lineWidth = 1;
+            for (let i = 0; i <= GRID; i++) {
+                ctx.beginPath();
+                ctx.moveTo(i * SIZE, 0);
+                ctx.lineTo(i * SIZE, canvas.height);
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.moveTo(0, i * SIZE);
+                ctx.lineTo(canvas.width, i * SIZE);
+                ctx.stroke();
+            }
+
+            // Змейка
+            const color = snakeColors[(level - 1) % snakeColors.length];
+
+            snake.forEach((seg, i) => {
+                const alpha = 0.3 + 0.7 * (i / snake.length);
+                const size = SIZE - 2 - (i / snake.length) * 2;
+                const x = seg.x * SIZE + (SIZE - size) / 2;
+                const y = seg.y * SIZE + (SIZE - size) / 2;
+
+                ctx.shadowColor = color;
+                ctx.shadowBlur = i === 0 ? 20 : 8;
+                ctx.fillStyle = i === 0 ? color : color;
+                ctx.globalAlpha = alpha;
+                ctx.beginPath();
+                ctx.roundRect(x, y, size, size, 4);
+                ctx.fill();
+            });
+            ctx.shadowBlur = 0;
+            ctx.globalAlpha = 1;
+
+            // Обычная еда
+            ctx.shadowColor = '#ff4d4d';
+            ctx.shadowBlur = 15;
+            ctx.fillStyle = '#ff4d4d';
+            ctx.beginPath();
+            ctx.arc(food.x * SIZE + SIZE/2, food.y * SIZE + SIZE/2, SIZE/2 - 3, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Золотая еда
+            if (goldenFood) {
+                const pulse = 1 + 0.1 * Math.sin(Date.now() / 200);
+                ctx.shadowColor = '#ffd700';
+                ctx.shadowBlur = 25;
+                ctx.fillStyle = '#ffd700';
+                const r = (SIZE/2 - 2) * pulse;
+                ctx.beginPath();
+                ctx.arc(goldenFood.x * SIZE + SIZE/2, goldenFood.y * SIZE + SIZE/2, r, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.fillStyle = '#fff';
+                ctx.font = '10px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText('★', goldenFood.x * SIZE + SIZE/2, goldenFood.y * SIZE + SIZE/2);
+            }
+            ctx.shadowBlur = 0;
+
+            // Пауза
+            if (isPaused) {
+                ctx.fillStyle = 'rgba(0,0,0,0.5)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = '#fff';
+                ctx.font = '30px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText('⏸ ПАУЗА', canvas.width/2, canvas.height/2);
+            }
+        }
+
+        // --- ЛОГИКА ---
+        function update() {
+            if (isPaused || !gameRunning) return;
+
+            const head = { x: snake[0].x + direction.x, y: snake[0].y + direction.y };
+
+            if (head.x < 0 || head.y < 0 || head.x >= GRID || head.y >= GRID) {
+                gameOver();
+                return;
+            }
+
+            for (let i = 1; i < snake.length; i++) {
+                if (head.x === snake[i].x && head.y === snake[i].y) {
+                    gameOver();
+                    return;
+                }
+            }
+
+            let ate = false;
+            if (head.x === food.x && head.y === food.y) {
+                ate = true;
+                score++;
+                eatenCount++;
+                playEatSound();
+                combo++;
+                lastEatTime = Date.now();
+                generateFood();
+                if (eatenCount % 5 === 0) {
+                    level++;
+                    speed = Math.max(40, speed - 8);
+                    playLevelUpSound();
+                    levelDisplay.textContent = level;
+                    levelBadge.textContent = level;
+                    panelLevel.textContent = level;
+                    if (level >= 3 && !goldenFood) generateGoldenFood();
+                }
+                if (Math.random() < 0.05 && !goldenFood && level >= 2) generateGoldenFood();
+            }
+
+            if (goldenFood && head.x === goldenFood.x && head.y === goldenFood.y) {
+                ate = true;
+                score += 5;
+                playGoldenSound();
+                goldenFood = null;
+                combo += 3;
+                setTimeout(() => {
+                    ctx.shadowColor = '#ffd700';
+                    ctx.shadowBlur = 50;
+                }, 50);
+            }
+
+            if (!ate) {
+                snake.pop();
+            }
+
+            snake.unshift(head);
+
+            if (goldenFood) {
+                goldenFood.timer--;
+                if (goldenFood.timer <= 0) goldenFood = null;
+            }
+
+            if (Date.now() - lastEatTime > 3000) combo = 0;
+
+            // Обновление UI
+            scoreDisplay.textContent = score;
+            eatenDisplay.textContent = eatenCount;
+            panelScore.textContent = score;
+            panelEaten.textContent = eatenCount;
+        }
+
+        // --- ИГРОВОЙ ЦИКЛ ---
+        function gameLoopTick() {
+            update();
+            draw();
+            if (gameRunning) {
+                gameLoop = setTimeout(gameLoopTick, speed);
+            }
+        }
+
+        function startGame() {
+            if (gameRunning) return;
+            gameRunning = true;
+            isPaused = false;
+            timer = 0;
+            timerInterval = setInterval(() => {
+                timer++;
+                timerDisplay.textContent = timer;
+                panelTimer.textContent = timer;
+            }, 1000);
+            gameLoopTick();
+        }
+
+        function gameOver() {
+            gameRunning = false;
+            clearTimeout(gameLoop);
+            clearInterval(timerInterval);
+            playDeathSound();
+
+            if (score > highScore) {
+                highScore = score;
+                localStorage.setItem('reptiliaHighScore', highScore);
+                highScoreDisplay.textContent = highScore;
+                panelHighScore.textContent = highScore;
+            }
+
+            addScoreToLeaderboard(score, timer);
+
+            finalScore.textContent = score;
+            finalTime.textContent = timer;
+            overlay.classList.add('active');
+            draw();
+        }
+
+        // --- УПРАВЛЕНИЕ ---
+        function changeDir(dir) {
+            if (isPaused || !gameRunning) return;
+            if (dir === 'up' && direction.y === 0) { direction = { x: 0, y: -1 }; }
+            else if (dir === 'down' && direction.y === 0) { direction = { x: 0, y: 1 }; }
+            else if (dir === 'left' && direction.x === 0) { direction = { x: -1, y: 0 }; }
+            else if (dir === 'right' && direction.x === 0) { direction = { x: 1, y: 0 }; }
+        }
+
+        function togglePause() {
+            if (!gameRunning) return;
+            isPaused = !isPaused;
+            if (isPaused) {
+                clearInterval(timerInterval);
+            } else {
+                timerInterval = setInterval(() => {
+                    timer++;
+                    timerDisplay.textContent = timer;
+                    panelTimer.textContent = timer;
+                }, 1000);
+                gameLoopTick();
+            }
+        }
+
+        // --- ТАБЛИЦА РЕКОРДОВ ---
+        function getLeaderboard() {
+            const data = localStorage.getItem('reptiliaLeaderboard');
+            return data ? JSON.parse(data) : [];
+        }
+
+        function addScoreToLeaderboard(score, time) {
+            let board = getLeaderboard();
+            board.push({ score, time, date: new Date().toLocaleDateString('ru-RU') });
+            board.sort((a, b) => b.score - a.score);
+            board = board.slice(0, 10);
+            localStorage.setItem('reptiliaLeaderboard', JSON.stringify(board));
+            renderLeaderboard();
+        }
+
+        function renderLeaderboard() {
+            const board = getLeaderboard();
+            const list = document.getElementById('leaderboardList');
+            if (board.length === 0) {
+                list.innerHTML = '<li>Пока нет рекордов...</li>';
+                return;
+            }
+            list.innerHTML = board.map((entry, i) =>
+                `<li>${i + 1}. <span>${entry.score}</span> (${entry.time}с, ${entry.date})</li>`
+            ).join('');
+        }
+
+        // --- ПЕРЕЗАПУСК ---
+        function restartGame() {
+            clearTimeout(gameLoop);
+            clearInterval(timerInterval);
+            overlay.classList.remove('active');
+            snake = [{ x: 10, y: 10 }];
+            direction = { x: 0, y: 0 };
+            score = 0;
+            level = 1;
+            speed = 120;
+            eatenCount = 0;
+            timer = 0;
+            combo = 0;
+            goldenFood = null;
+            gameRunning = false;
+            isPaused = false;
+            scoreDisplay.textContent = 0;
+            levelDisplay.textContent = 1;
+            levelBadge.textContent = 1;
+            timerDisplay.textContent = 0;
+            eatenDisplay.textContent = 0;
+            panelScore.textContent = 0;
+            panelLevel.textContent = 1;
+            panelEaten.textContent = 0;
+            panelTimer.textContent = 0;
+            generateFood();
+            draw();
+            startGame();
+        }
+
+        // --- ТЕМА ---
+        function toggleTheme() {
+            const wrapper = document.querySelector('.game-container');
+            wrapper.toggleAttribute('data-theme');
+        }
+
+        // --- КЛАВИШИ ---
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowUp' || e.key === 'ArrowDown' || e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === ' ' || e.key === 'Space' || e.key === 'r' || e.key === 'R' || e.key === 't' || e.key === 'T') {
+                e.preventDefault();
+            }
+
+            if (e.key === 'ArrowUp') changeDir('up');
+            if (e.key === 'ArrowDown') changeDir('down');
+            if (e.key === 'ArrowLeft') changeDir('left');
+            if (e.key === 'ArrowRight') changeDir('right');
+            if (e.key === ' ' || e.key === 'Space') togglePause();
+            if (e.key === 'r' || e.key === 'R') restartGame();
+            if (e.key === 't' || e.key === 'T') toggleTheme();
+        });
+
+        // --- ИНИЦИАЛИЗАЦИЯ ---
+        generateFood();
+        renderLeaderboard();
+        draw();
+        startGame();
+
+        if (!CanvasRenderingContext2D.prototype.roundRect) {
+            CanvasRenderingContext2D.prototype.roundRect = function(x, y, w, h, r) {
+                if (r > w/2) r = w/2;
+                if (r > h/2) r = h/2;
+                this.moveTo(x + r, y);
+                this.arcTo(x + w, y, x + w, y + h, r);
+                this.arcTo(x + w, y + h, x, y + h, r);
+                this.arcTo(x, y + h, x, y, r);
+                this.arcTo(x, y, x + w, y, r);
+                return this;
+            };
+        }
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+       <link rel="icon" type="image/png" href="fc.ico">
+    <title>Fight Club | Immersive</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        :root {
+            --bg: #080808;
+            --surface: #121212;
+            --border: #2a2a2a;
+            --text: #e0e0e0;
+            --muted: #888;
+            --blood: #b30000;
+            --blood-dim: rgba(179, 0, 0, 0.15);
+            --blood-glow: rgba(179, 0, 0, 0.3);
+            --shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+            --radius: 24px;
+            --transition: 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        a { text-decoration: none; color: inherit; }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg); }
+        ::-webkit-scrollbar-thumb { background: var(--blood); border-radius: 6px; }
+
+        .noise {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
+        }
+
+        .grain {
+            position: fixed;
+            inset: 0;
+            z-index: 1;
+            pointer-events: none;
+            background: repeating-linear-gradient(0deg, rgba(0,0,0,0.03) 0px, rgba(0,0,0,0.03) 1px, transparent 1px, transparent 2px);
+        }
+
+        #particles-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            background: rgba(8, 8, 8, 0.8);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .logo {
+            font-size: 20px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 6px;
+            color: var(--text);
+        }
+        .logo span { color: var(--blood); }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+        }
+        .nav-links a {
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--muted);
+            transition: 0.3s;
+            position: relative;
+        }
+        .nav-links a:hover {
+            color: var(--text);
+        }
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: var(--blood);
+            transition: 0.3s;
+        }
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .back-button {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 12px 24px;
+            border-radius: 40px;
+            color: var(--text);
+            font-weight: 600;
+            font-size: 14px;
+            transition: var(--transition);
+            box-shadow: var(--shadow);
+            text-decoration: none;
+        }
+        .back-button:hover {
+            border-color: var(--blood);
+            color: var(--blood);
+            transform: translateY(-3px);
+        }
+
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 120px 20px 60px;
+            position: relative;
+            z-index: 3;
+        }
+
+        .hero h1 {
+            font-size: clamp(64px, 12vw, 140px);
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 12px;
+            color: var(--text);
+            text-shadow: 0 4px 40px rgba(0, 0, 0, 0.9);
+            opacity: 0;
+            transform: translateY(40px);
+            animation: rise 1.4s 0.2s forwards;
+        }
+
+        .hero .subtitle {
+            font-size: 24px;
+            color: var(--muted);
+            letter-spacing: 8px;
+            text-transform: uppercase;
+            margin-top: 12px;
+            opacity: 0;
+            transform: translateY(40px);
+            animation: rise 1.4s 0.6s forwards;
+        }
+
+        .hero .quote {
+            font-size: 22px;
+            font-style: italic;
+            color: var(--blood);
+            max-width: 700px;
+            margin-top: 30px;
+            opacity: 0;
+            transform: translateY(40px);
+            animation: rise 1.4s 1s forwards;
+        }
+
+        .hero .scroll-hint {
+            position: absolute;
+            bottom: 40px;
+            color: var(--muted);
+            font-size: 12px;
+            letter-spacing: 6px;
+            text-transform: uppercase;
+            animation: floatDown 2.4s infinite;
+        }
+
+        .hero .soap-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 0;
+            pointer-events: none;
+            font-size: 14vw;
+            color: rgba(179, 0, 0, 0.08);
+            text-transform: uppercase;
+            font-weight: 900;
+            letter-spacing: 4px;
+            white-space: nowrap;
+            text-shadow: 0 0 40px rgba(179, 0, 0, 0.1);
+        }
+
+        @keyframes rise {
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes floatDown {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(12px); }
+        }
+
+        .section {
+            padding: 80px 40px;
+            max-width: 1100px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 3;
+        }
+
+        .section-title {
+            font-size: 36px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            margin-bottom: 40px;
+            color: var(--text);
+        }
+        .section-title span { color: var(--blood); }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: var(--radius);
+            padding: 48px;
+            margin-bottom: 40px;
+            transition: var(--transition);
+            box-shadow: var(--shadow);
+        }
+        .glass-card:hover {
+            border-color: rgba(179, 0, 0, 0.2);
+            transform: translateY(-4px);
+        }
+        .glass-card h3 {
+            font-size: 28px;
+            margin-bottom: 16px;
+            color: var(--text);
+        }
+        .glass-card p {
+            color: var(--muted);
+            font-size: 18px;
+            line-height: 1.8;
+            max-width: 700px;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        .gallery-grid .frame {
+            position: relative;
+            border-radius: 16px;
+            overflow: hidden;
+            aspect-ratio: 4/3;
+            border: 1px solid var(--border);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .gallery-grid .frame:hover {
+            border-color: var(--blood);
+            transform: scale(1.02);
+            box-shadow: 0 0 40px var(--blood-glow);
+        }
+        .gallery-grid .frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .gallery-grid .frame::after {
+            content: '+';
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            color: #fff;
+            opacity: 0;
+            transition: 0.4s;
+            background: rgba(0, 0, 0, 0.3);
+        }
+        .gallery-grid .frame:hover::after {
+            opacity: 1;
+        }
+
+        .lightbox {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.92);
+            backdrop-filter: blur(20px);
+            z-index: 99999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: 0.4s;
+        }
+        .lightbox.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .lightbox img {
+            max-width: 85%;
+            max-height: 85%;
+            border-radius: 20px;
+            box-shadow: 0 40px 100px rgba(0, 0, 0, 0.9);
+            transform: scale(0.9);
+            transition: 0.4s;
+        }
+        .lightbox.open img {
+            transform: scale(1);
+        }
+        .lightbox .close-lb {
+            position: absolute;
+            top: 30px;
+            right: 40px;
+            color: #fff;
+            font-size: 40px;
+            cursor: pointer;
+            transition: 0.3s;
+            font-weight: 100;
+        }
+        .lightbox .close-lb:hover {
+            color: var(--blood);
+            transform: rotate(90deg);
+        }
+
+        .quote-shuffle {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 28px;
+            border: 1px solid var(--blood);
+            border-radius: 40px;
+            background: transparent;
+            color: var(--blood);
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-top: 20px;
+        }
+        .quote-shuffle:hover {
+            background: var(--blood);
+            color: #fff;
+            box-shadow: 0 0 40px var(--blood-glow);
+        }
+
+        /* --- АХУЕННАЯ КАРТОЧКА САУНДТРЕКА --- */
+        .soundtrack-card {
+            display: flex;
+            align-items: center;
+            gap: 40px;
+            flex-wrap: wrap;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 40px;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+        .soundtrack-card:hover {
+            border-color: var(--blood);
+            box-shadow: 0 0 50px var(--blood-glow);
+        }
+
+        .soundtrack-card .vinyl-wrapper {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            flex-shrink: 0;
+        }
+
+        .soundtrack-card .vinyl-wrapper img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid var(--border);
+            box-shadow: 0 0 30px rgba(0,0,0,0.8);
+            transition: transform 0.5s ease;
+        }
+
+        /* Анимация вращения винила */
+        .soundtrack-card .vinyl-wrapper.playing img {
+            animation: spinVinyl 3s linear infinite;
+        }
+
+        @keyframes spinVinyl {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .soundtrack-card .vinyl-wrapper::before {
+            content: '';
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 40px; height: 40px;
+            background: var(--bg);
+            border-radius: 50%;
+            border: 2px solid var(--border);
+            z-index: 2;
+        }
+
+        .soundtrack-card .info {
+            flex: 1;
+            min-width: 200px;
+            text-align: left;
+        }
+
+        .soundtrack-card .info h3 {
+            font-size: 32px;
+            margin-bottom: 4px;
+            letter-spacing: 1px;
+        }
+
+        .soundtrack-card .info .artist {
+            font-size: 18px;
+            color: var(--muted);
+            margin-bottom: 8px;
+        }
+
+        .soundtrack-card .info .context {
+            font-size: 14px;
+            color: var(--muted);
+            font-style: italic;
+            border-left: 2px solid var(--blood);
+            padding-left: 16px;
+            margin-bottom: 20px;
+        }
+
+        /* Кастомный аудиоплеер */
+        .soundtrack-card audio {
+            width: 100%;
+            max-width: 400px;
+            height: 50px;
+            border-radius: 25px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            outline: none;
+        }
+        .soundtrack-card audio::-webkit-media-controls-panel {
+            background-color: var(--bg);
+        }
+        .soundtrack-card audio::-webkit-media-controls-play-button {
+            background-color: var(--blood);
+            border-radius: 50%;
+            color: #fff;
+        }
+
+        .soundtrack-card .play-hint {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 13px;
+            color: var(--muted);
+            margin-top: 10px;
+        }
+
+        /* --- ОСТАЛЬНЫЕ СЕКЦИИ --- */
+        .timeline {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-top: 20px;
+        }
+        .timeline .event {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 16px 20px;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 12px;
+            border-left: 3px solid var(--blood);
+        }
+        .timeline .event .year {
+            font-weight: 700;
+            color: var(--blood);
+            min-width: 80px;
+        }
+
+        .symbols-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .symbols-grid .symbol {
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 12px;
+            text-align: center;
+            border: 1px solid var(--border);
+            transition: var(--transition);
+        }
+        .symbols-grid .symbol:hover {
+            border-color: var(--blood);
+        }
+        .symbols-grid .symbol i {
+            font-size: 32px;
+            color: var(--blood);
+            margin-bottom: 10px;
+        }
+
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .comparison .col {
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+        .comparison .col h4 {
+            color: var(--blood);
+            margin-bottom: 10px;
+        }
+
+        .hidden-meaning {
+            display: none;
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 12px;
+            border-left: 4px solid var(--blood);
+        }
+        .hidden-meaning.active {
+            display: block;
+        }
+
+        .secret-frames {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .secret-frames .frame {
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            aspect-ratio: 16/9;
+        }
+        .secret-frames .frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        footer {
+            padding: 60px 20px;
+            text-align: center;
+            color: var(--muted);
+            font-size: 14px;
+            border-top: 1px solid var(--border);
+            position: relative;
+            z-index: 3;
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 14px 20px;
+                flex-direction: column;
+                gap: 10px;
+            }
+            .nav-links {
+                gap: 16px;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            .hero h1 {
+                font-size: 40px;
+                letter-spacing: 4px;
+            }
+            .glass-card {
+                padding: 28px;
+            }
+            .section {
+                padding: 40px 20px;
+            }
+            .back-button {
+                bottom: 10px;
+                left: 10px;
+                padding: 8px 16px;
+                font-size: 12px;
+            }
+            .gallery-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            .comparison {
+                grid-template-columns: 1fr;
+            }
+            .soundtrack-card {
+                flex-direction: column;
+                text-align: center;
+                padding: 30px;
+            }
+            .soundtrack-card .info {
+                text-align: center;
+            }
+            .soundtrack-card .info .context {
+                border-left: none;
+                border-top: 2px solid var(--blood);
+                padding-top: 16px;
+                padding-left: 0;
+            }
+            .soundtrack-card .vinyl-wrapper {
+                width: 150px;
+                height: 150px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="noise"></div>
+    <div class="grain"></div>
+
+    <canvas id="particles-canvas"></canvas>
+
+    <header class="navbar">
+        <div class="logo">FIGHT <span>CLUB</span></div>
+        <ul class="nav-links">
+            <li><a href="#about">Сюжет</a></li>
+            <li><a href="#gallery">Кадры</a></li>
+            <li><a href="#facts">Факты</a></li>
+            <li><a href="#soundtrack">Саундтрек</a></li>
+            <li><a href="#symbols">Символы</a></li>
+            <li><a href="#meaning">Смысл</a></li>
+            <li><a href="#review">Отзыв</a></li>
+        </ul>
+    </header>
+
+    <a href="https://dsdfeels.github.io" class="back-button">
+        <i class="fas fa-arrow-left"></i>
+        Вернуться в портфолио
+    </a>
+
+    <section class="hero">
+        <div class="soap-container">FIGHT CLUB</div>
+        <div>
+            <h1>Бойцовский клуб</h1>
+            <div class="subtitle">1999 · Дэвид Финчер</div>
+            <div class="quote" id="heroQuote">«Первое правило — никому не рассказывать»</div>
+            <button class="quote-shuffle" onclick="changeQuote()">
+                <i class="fas fa-sync-alt"></i> Сломай цитату
+            </button>
+        </div>
+        <div class="scroll-hint">Листай вниз</div>
+    </section>
+
+    <section id="about" class="section">
+        <h2 class="section-title"><span>//</span> Сюжет</h2>
+        <div class="glass-card">
+            <h3>Краткий обзор</h3>
+            <p>
+                Скучающий офисный работник знакомится с загадочным Тайлером Дёрденом — харизматичным бунтарём.
+                Вместе они создают подпольный бойцовский клуб, где мужчины могут выплеснуть агрессию.
+                Но вскоре их детище выходит из-под контроля и превращается в нечто гораздо более масштабное и разрушительное.
+            </p>
+            <p style="margin-top: 16px;">
+                <b>Режиссёр:</b> Дэвид Финчер &nbsp;|&nbsp; <b>В ролях:</b> Брэд Питт, Эдвард Нортон, Хелена Бонем Картер
+            </p>
+        </div>
+    </section>
+
+    <section id="gallery" class="section">
+        <h2 class="section-title"><span>//</span> Кадры</h2>
+        <div class="glass-card" style="padding-bottom: 32px;">
+            <div class="gallery-grid">
+                <div class="frame" onclick="openLightbox(this)"><img src="постер.jpg" alt="Постер"></div>
+                <div class="frame" onclick="openLightbox(this)"><img src="на крыше.jpg" alt="На крыше"></div>
+                <div class="frame" onclick="openLightbox(this)"><img src="тайлер.jpg" alt="Тайлер"></div>
+                <div class="frame" onclick="openLightbox(this)"><img src="рассказчик.jpg" alt="Рассказчик"></div>
+                <div class="frame" onclick="openLightbox(this)"><img src="финал.jpg" alt="Драка"></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="facts" class="section">
+        <h2 class="section-title"><span>//</span> Факты</h2>
+        <div class="glass-card">
+            <h3>Культовые детали</h3>
+            <ul style="list-style: none; padding: 0; color: var(--muted); font-size: 17px; line-height: 2.2;">
+                <li>🎬 Студия не хотела Брэда Питта — считала его «слишком красивым» для роли Тайлера.</li>
+                <li>📖 Роман Чака Паланика был написан как сатира на мужские журналы и культ потребления.</li>
+                <li>💬 Фраза «Первое правило» вошла в 100 лучших цитат американского кино.</li>
+                <li>🔍 В финале на 1/25 секунды мелькает кадр, который стал легендой среди фанатов.</li>
+                <li>🎭 Сцена, где главный герой «избивает себя», была снята за один дубль.</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- САУНДТРЕК -->
+    <section id="soundtrack" class="section">
+        <h2 class="section-title"><span>//</span> Саундтрек</h2>
+        <div class="soundtrack-card">
+            <div class="vinyl-wrapper" id="vinylDisc">
+                <img src="обложка2.jpg" alt="Обложка">
+            </div>
+            <div class="info">
+                <h3>Where Is My Mind</h3>
+                <div class="artist">Pixies</div>
+                <div class="context">«Ты встретил меня в очень странное время» — культовая сцена финала</div>
+                <audio id="soundtrackAudio" controls onplay="startVinyl()" onpause="stopVinyl()">
+                    <source src="Where_Is_My_Mind_.mp3" type="audio/mpeg">
+                </audio>
+                <div class="play-hint">
+                    <i class="fas fa-info-circle"></i> Нажми «Play», чтобы винил закрутился
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="symbols" class="section">
+        <h2 class="section-title"><span>//</span> Символы</h2>
+        <div class="glass-card">
+            <div class="symbols-grid">
+                <div class="symbol"><i class="fas fa-soap"></i><h3>Мыло</h3><p>Символ очищения и разрушения</p></div>
+                <div class="symbol"><i class="fas fa-tshirt"></i><h3>Красная куртка</h3><p>Символ бунта и свободы</p></div>
+                <div class="symbol"><i class="fas fa-bomb"></i><h3>Взрывы</h3><p>Символ разрушения системы</p></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="meaning" class="section">
+        <h2 class="section-title"><span>//</span> Скрытый смысл</h2>
+        <div class="glass-card">
+            <button class="quote-shuffle" onclick="toggleHiddenMeaning()">🧠 Показать скрытый смысл</button>
+            <div class="hidden-meaning" id="hiddenMeaning">
+                <p>«Бойцовский клуб» — это не просто фильм о насилии. Это метафора кризиса идентичности в современном мире. Главный герой ищет себя, разрушая всё вокруг, чтобы наконец освободиться от общества потребления. Фильм задаёт вопрос: «Кто ты, если у тебя ничего нет?»</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="review" class="section">
+        <h2 class="section-title"><span>//</span> Моё мнение</h2>
+        <div class="glass-card">
+            <h3>Почему это шедевр</h3>
+            <p>
+                «Бойцовский клуб» — это не фильм о драках. Это зеркало, которое держат перед обществом потребления.
+                Он ломает стереотипы, задаёт неудобные вопросы и оставляет послевкусие на долгие годы.
+                Каждый раз, пересматривая его, я нахожу новые смыслы.
+            </p>
+            <p style="margin-top: 16px; font-size: 22px; font-weight: 700; color: var(--blood);">
+                Оценка: 10 / 10
+            </p>
+        </div>
+    </section>
+
+    <footer>
+        <p>FIGHT CLUB © 1999 · Сделано с нуля</p>
+        <p style="margin-top: 8px; font-size: 12px; color: var(--muted);">
+            Посещений: <span id="visitCount">0</span>
+        </p>
+    </footer>
+
+    <div class="lightbox" id="lightbox" onclick="closeLightbox()">
+        <span class="close-lb">&times;</span>
+        <img src="" id="lbImage" alt="Увеличенный кадр">
+    </div>
+
+    <script>
+        // --- ЧАСТИЦЫ ---
+        const canvas = document.getElementById('particles-canvas');
+        const ctx = canvas.getContext('2d');
+        let w, h, particles = [];
+
+        function resize() {
+            w = canvas.width = window.innerWidth;
+            h = canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * w;
+                this.y = Math.random() * h;
+                this.size = 2 + Math.random() * 4;
+                this.speedX = (Math.random() - 0.5) * 0.4;
+                this.speedY = -0.2 - Math.random() * 0.8;
+                this.opacity = 0.2 + Math.random() * 0.4;
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                if (this.y < -20) {
+                    this.y = h + 20;
+                    this.x = Math.random() * w;
+                }
+                if (this.x < -20 || this.x > w + 20) {
+                    this.x = Math.random() * w;
+                }
+            }
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
+                ctx.fill();
+            }
+        }
+
+        for (let i = 0; i < 60; i++) particles.push(new Particle());
+
+        function animate() {
+            ctx.clearRect(0, 0, w, h);
+            particles.forEach(p => { p.update(); p.draw(); });
+            requestAnimationFrame(animate);
+        }
+        animate();
+
+        // --- СЧЁТЧИК ПОСЕЩЕНИЙ ---
+        let visits = parseInt(localStorage.getItem('fightClubVisits')) || 0;
+        visits++;
+        localStorage.setItem('fightClubVisits', visits);
+        document.getElementById('visitCount').textContent = visits;
+
+        // --- ЦИТАТЫ ---
+        const quotes = [
+            '«Первое правило — никому не рассказывать»',
+            '«Второе правило — никогда не рассказывать»',
+            '«Ты не твоя работа»',
+            '«Ты не твой банковский счёт»',
+            '«Свобода — это возможность задавать вопросы»',
+            '«Мы из поколения мужчин, выращенных женщинами»',
+            '«Настало время разбить всё вдребезги»',
+            '«Твои вещи — это не ты»'
+        ];
+        let quoteIndex = 0;
+
+        function changeQuote() {
+            quoteIndex = (quoteIndex + 1) % quotes.length;
+            const el = document.getElementById('heroQuote');
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(-10px)';
+            setTimeout(() => {
+                el.textContent = quotes[quoteIndex];
+                el.style.opacity = '1';
+                el.style.transform = 'translateY(0)';
+            }, 300);
+        }
+
+        // --- LIGHTBOX ---
+        function openLightbox(element) {
+            const img = element.querySelector('img');
+            document.getElementById('lbImage').src = img.src;
+            document.getElementById('lightbox').classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeLightbox() {
+            document.getElementById('lightbox').classList.remove('open');
+            document.body.style.overflow = 'auto';
+        }
+
+        // --- СКРЫТЫЙ СМЫСЛ ---
+        function toggleHiddenMeaning() {
+            document.getElementById('hiddenMeaning').classList.toggle('active');
+        }
+
+        // --- АНИМАЦИЯ ВИНИЛА ---
+        function startVinyl() {
+            document.getElementById('vinylDisc').classList.add('playing');
+        }
+        function stopVinyl() {
+            document.getElementById('vinylDisc').classList.remove('playing');
+        }
+
+        // --- АКТИВНОЕ МЕНЮ ---
+        const sections = document.querySelectorAll('.section');
+        const navLinks = document.querySelectorAll('.nav-links a');
+
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(sec => {
+                const top = sec.offsetTop - 120;
+                if (window.scrollY >= top) current = sec.getAttribute('id');
+            });
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === '#' + current) link.classList.add('active');
+            });
+        });
+    </script>
+
+</body>
+</html>

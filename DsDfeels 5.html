@@ -3,53 +3,257 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Солтан Александр | Портфолио</title>
-       <link rel="stylesheet" href="DsDfeels 5.css">
+    <title>Александр Солтан | Визитка</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-body: #0a0a0a;
+            --bg-card: #111111;
+            --bg-sidebar: #0d0d0d;
+            --border: #2a2a2a;
+            --text-main: #f0f0f0;
+            --text-muted: #888;
+            --accent: #e60000;
+            --accent-dim: rgba(230, 0, 0, 0.2);
+            --accent-glow: rgba(230, 0, 0, 0.4);
+            --shadow: 0 12px 40px rgba(0, 0, 0, 0.8);
+            --radius: 20px;
+            --transition: 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--bg-body);
+            color: var(--text-main);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 40px 30px;
+            max-width: 450px;
+            width: 100%;
+            text-align: center;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            border-color: var(--accent);
+            box-shadow: 0 0 40px var(--accent-glow);
+            transform: translateY(-4px);
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 50% 50%, var(--accent-dim), transparent 60%);
+            opacity: 0.05;
+            pointer-events: none;
+        }
+
+        .avatar {
+            width: 160px;
+            height: 160px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid var(--accent);
+            box-shadow: 0 0 30px var(--accent-glow);
+            margin-bottom: 20px;
+            transition: var(--transition);
+        }
+
+        .avatar:hover {
+            transform: scale(1.05);
+        }
+
+        h1 {
+            font-size: 32px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            margin-bottom: 4px;
+        }
+
+        .subtitle {
+            color: var(--accent);
+            font-weight: 500;
+            font-size: 16px;
+            margin-bottom: 20px;
+            letter-spacing: 1px;
+        }
+
+        .divider {
+            width: 60px;
+            height: 3px;
+            background: var(--accent);
+            margin: 16px auto;
+            border-radius: 4px;
+            box-shadow: 0 0 20px var(--accent-glow);
+        }
+
+        .info-list {
+            list-style: none;
+            text-align: left;
+            margin: 20px 0;
+            padding: 0;
+        }
+
+        .info-list li {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-muted);
+            font-size: 15px;
+            transition: var(--transition);
+        }
+
+        .info-list li:last-child {
+            border-bottom: none;
+        }
+
+        .info-list li:hover {
+            color: var(--text-main);
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .info-list li i {
+            color: var(--accent);
+            width: 22px;
+            text-align: center;
+            font-size: 18px;
+        }
+
+        .links {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        .links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            padding: 14px 20px;
+            background: var(--bg-body);
+            border: 1px solid var(--border);
+            border-radius: 60px;
+            color: var(--text-main);
+            text-decoration: none;
+            transition: var(--transition);
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .links a i {
+            font-size: 18px;
+        }
+
+        .links a:hover {
+            border-color: var(--accent);
+            background: var(--accent-dim);
+            color: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        .links .highlight-btn {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #fff;
+            box-shadow: 0 4px 20px var(--accent-glow);
+        }
+
+        .links .highlight-btn:hover {
+            background: #cc0000;
+            box-shadow: 0 6px 30px var(--accent-glow);
+        }
+
+        .footer {
+            margin-top: 28px;
+            font-size: 13px;
+            color: var(--text-muted);
+            border-top: 1px solid var(--border);
+            padding-top: 20px;
+        }
+
+        .footer span {
+            color: var(--accent);
+        }
+
+        @media (max-width: 480px) {
+            .card {
+                padding: 30px 20px;
+            }
+            h1 {
+                font-size: 28px;
+            }
+        }
+    </style>
 </head>
 <body>
 
     <div class="card">
-        <!-- ФОТОГРАФИЯ (убедись, что файл avatar.jpg лежит рядом) -->
-        <img src="DsDava.jpg" alt="Фото Солтана" class="avatar">
+        <img src="ava2.jpg" alt="Александр Солтан" class="avatar">
 
-        <!-- ИМЯ И ПРОФЕССИЯ -->
-        <h1>Солтан Александр</h1>
-        <div class="subtitle">💻 Web-разработчик (в процессе)</div>
+        <h1>Александр Солтан</h1>
+        <div class="subtitle">// веб-разработчик</div>
+        <div class="divider"></div>
 
-        <!-- ИНФОРМАЦИЯ О СЕБЕ (СПИСОК) -->
         <ul class="info-list">
-            <li>📍 Симферополь, Крым</li>
-            <li>🎂 19 лет (2007)</li>
-            <li>🖥️ Студент 3 курса (Финансово-экономический колледж)</li>
+            <li>
+                <i class="fas fa-map-pin"></i>
+                Симферополь, Крым
+            </li>
+            <li>
+                <i class="fas fa-code"></i>
+                HTML · CSS · JS · React
+            </li>
+            <li>
+                <i class="fas fa-briefcase"></i>
+                Портфолио 3.0
+            </li>
         </ul>
-        <!-- ЦЕЛИ -->
-        <div class="goals">
-            <h3>🎯 Мои цели на месяц:</h3>
-            <ul>
-                <li>Научиться делать простые сайты</li>
-                <li>Заработать первые деньги на фрилансе</li>
-                <li>Ежедневная зарядка и спорт</li>
-            </ul>
+
+        <div class="links">
+            <a href="mailto:dsdfeels@gmail.com" class="highlight-btn">
+                <i class="fas fa-envelope"></i>
+                dsdfeels@gmail.com
+            </a>
+            <a href="https://t.me/yazukuin" target="_blank">
+                <i class="fab fa-telegram-plane"></i>
+                Telegram
+            </a>
+            <a href="https://github.com/dsdfeels" target="_blank">
+                <i class="fab fa-github"></i>
+                GitHub
+            </a>
+            <a href="https://dsdfeels.github.io" target="_blank">
+                <i class="fas fa-globe"></i>
+                Портфолио
+            </a>
         </div>
 
-        <!-- КНОПКА СВЯЗИ -->
-        <a href="https://t.me/yazukuin" class="btn-telegram" target="_blank">
-            ✉️ Написать мне в Telegram
-        </a>
-
-        <!-- ПОДВАЛ С САЙТОМ -->
-        <div class="footer-text">
-            🚀 Учусь по <a href="https://www.w3schools.com/" target="_blank">W3Schools</a>
+        <div class="footer">
+            &copy; 2026 &nbsp; <span>✦</span> &nbsp; сделано с нуля
         </div>
     </div>
-    <!-- Кнопка возврата в стиле нового портфолио -->
-<div style="position: fixed; bottom: 25px; left: 25px; z-index: 9999; font-family: 'Segoe UI', system-ui, sans-serif;">
-    <a href="https://dsdfeels.github.io" style="display: inline-flex; align-items: center; gap: 10px; background: #1e293b; color: #f1f5f9; padding: 14px 28px; border-radius: 50px; text-decoration: none; font-weight: 600; font-size: 16px; box-shadow: 0 8px 25px rgba(0,0,0,0.4); border: 1px solid rgba(59, 130, 246, 0.4); transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
-        <span style="font-size: 20px; line-height: 1;">⬅</span>
-        Вернуться в портфолио
-    </a>
-</div>
-    </a>
-</div>
+
 </body>
 </html>

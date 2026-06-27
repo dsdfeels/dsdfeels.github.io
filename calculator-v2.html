@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RATE | Калькулятор</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-body: #0a0a0a;
+            --bg-card: #111111;
+            --border: #2a2a2a;
+            --text-main: #f0f0f0;
+            --text-muted: #888;
+            --accent: #e60000;
+            --accent-dim: rgba(230, 0, 0, 0.2);
+            --accent-glow: rgba(230, 0, 0, 0.4);
+            --shadow: 0 12px 40px rgba(0, 0, 0, 0.8);
+            --radius: 20px;
+            --transition: 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        [data-theme="light"] {
+            --bg-body: #f4f4f9;
+            --bg-card: #ffffff;
+            --border: #d0d0d8;
+            --text-main: #0a0a0a;
+            --text-muted: #555;
+            --accent: #e60000;
+            --accent-dim: rgba(230, 0, 0, 0.2);
+            --accent-glow: rgba(230, 0, 0, 0.4);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--bg-body);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+            position: fixed;
+            top: 0;
+            left: 0;
+        }
+
+        .calc-container {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 30px;
+            max-width: 380px;
+            width: 100%;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .calc-container:hover {
+            border-color: var(--accent);
+            box-shadow: 0 0 40px var(--accent-glow);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .header h1 {
+            font-size: 20px;
+            font-weight: 800;
+            letter-spacing: 1px;
+        }
+        .header h1 span { color: var(--accent); }
+        .header .theme-btn {
+            background: transparent;
+            border: 1px solid var(--border);
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            color: var(--text-main);
+            font-size: 16px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .header .theme-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .display {
+            background: var(--bg-body);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin-bottom: 16px;
+            text-align: right;
+            min-height: 70px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            overflow: hidden;
+        }
+
+        .display .expression {
+            font-size: 14px;
+            color: var(--text-muted);
+            min-height: 20px;
+            word-wrap: break-word;
+        }
+        .display .result {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--text-main);
+            transition: all 0.1s;
+        }
+
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+        }
+
+        .btn {
+            padding: 16px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: var(--bg-body);
+            color: var(--text-main);
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .btn:hover {
+            background: var(--accent-dim);
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+        .btn:active {
+            transform: scale(0.95);
+        }
+
+        .btn.operator {
+            color: var(--accent);
+            border-color: var(--accent);
+        }
+        .btn.operator:hover {
+            background: var(--accent);
+            color: #fff;
+        }
+
+        .btn.equals {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #fff;
+        }
+        .btn.equals:hover {
+            background: #cc0000;
+            box-shadow: 0 0 20px var(--accent-glow);
+        }
+
+        .btn.clear {
+            color: #ff4d4d;
+            border-color: #ff4d4d;
+        }
+        .btn.clear:hover {
+            background: #ff4d4d;
+            color: #fff;
+        }
+
+        .btn.function {
+            color: var(--text-muted);
+        }
+        .btn.function:hover {
+            color: var(--text-main);
+        }
+
+        .back-button {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            padding: 12px 24px;
+            border-radius: 40px;
+            color: var(--text-main);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 15px;
+            transition: var(--transition);
+            box-shadow: var(--shadow);
+        }
+        .back-button:hover {
+            border-color: var(--accent);
+            background: var(--accent-dim);
+            color: var(--accent);
+            transform: translateY(-3px);
+        }
+        .back-button i {
+            font-size: 18px;
+        }
+
+        .history {
+            margin-top: 16px;
+            padding: 12px;
+            background: var(--bg-body);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            font-size: 13px;
+            color: var(--text-muted);
+            max-height: 100px;
+            overflow-y: auto;
+        }
+        .history .entry {
+            padding: 4px 0;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+        }
+        .history .entry:last-child {
+            border-bottom: none;
+        }
+        .history .entry span {
+            color: var(--text-main);
+        }
+        .history::-webkit-scrollbar {
+            width: 4px;
+        }
+        .history::-webkit-scrollbar-thumb {
+            background: var(--accent);
+            border-radius: 4px;
+        }
+
+        @media (max-width: 480px) {
+            .calc-container { padding: 20px; }
+            .btn { padding: 14px; font-size: 16px; }
+            .back-button {
+                bottom: 10px;
+                left: 10px;
+                padding: 8px 16px;
+                font-size: 13px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <a href="index.html" class="back-button">
+        <i class="fas fa-arrow-left"></i>
+        Вернуться в портфолио
+    </a>
+
+    <div class="calc-container" id="calcContainer">
+        <div class="header">
+            <h1>RATE <span>🧮</span></h1>
+            <button class="theme-btn" onclick="toggleTheme()">🌙</button>
+        </div>
+
+        <div class="display">
+            <div class="expression" id="expression"></div>
+            <div class="result" id="result">0</div>
+        </div>
+
+        <div class="buttons">
+            <button class="btn clear" onclick="clearAll()">AC</button>
+            <button class="btn function" onclick="clearEntry()">CE</button>
+            <button class="btn function" onclick="backspace()">⌫</button>
+            <button class="btn operator" onclick="appendOperator('/')">÷</button>
+
+            <button class="btn" onclick="appendNumber('7')">7</button>
+            <button class="btn" onclick="appendNumber('8')">8</button>
+            <button class="btn" onclick="appendNumber('9')">9</button>
+            <button class="btn operator" onclick="appendOperator('*')">×</button>
+
+            <button class="btn" onclick="appendNumber('4')">4</button>
+            <button class="btn" onclick="appendNumber('5')">5</button>
+            <button class="btn" onclick="appendNumber('6')">6</button>
+            <button class="btn operator" onclick="appendOperator('-')">−</button>
+
+            <button class="btn" onclick="appendNumber('1')">1</button>
+            <button class="btn" onclick="appendNumber('2')">2</button>
+            <button class="btn" onclick="appendNumber('3')">3</button>
+            <button class="btn operator" onclick="appendOperator('+')">+</button>
+
+            <button class="btn function" onclick="appendNumber('00')">00</button>
+            <button class="btn" onclick="appendNumber('0')">0</button>
+            <button class="btn" onclick="appendDot()">.</button>
+            <button class="btn equals" onclick="calculate()">=</button>
+        </div>
+
+        <div class="history" id="history">
+            <div class="entry" style="color: var(--text-muted);">История пуста</div>
+        </div>
+    </div>
+
+    <script>
+        const resultEl = document.getElementById('result');
+        const expressionEl = document.getElementById('expression');
+        const historyEl = document.getElementById('history');
+
+        let currentInput = '0';
+        let previousInput = '';
+        let operation = null;
+        let shouldReset = false;
+        let history = [];
+
+        // --- ЗАГРУЗКА ИСТОРИИ ---
+        function loadHistory() {
+            const stored = localStorage.getItem('calcHistory');
+            if (stored) {
+                history = JSON.parse(stored);
+                renderHistory();
+            }
+        }
+
+        function saveHistory() {
+            localStorage.setItem('calcHistory', JSON.stringify(history));
+        }
+
+        function addHistory(expr, result) {
+            const entry = `${expr} = ${result}`;
+            history.unshift(entry);
+            if (history.length > 10) history.pop();
+            saveHistory();
+            renderHistory();
+        }
+
+        function renderHistory() {
+            if (history.length === 0) {
+                historyEl.innerHTML = '<div class="entry" style="color: var(--text-muted);">История пуста</div>';
+                return;
+            }
+            historyEl.innerHTML = history.map(entry =>
+                `<div class="entry"><span>${entry}</span></div>`
+            ).join('');
+        }
+
+        // --- ОСНОВНЫЕ ФУНКЦИИ ---
+        function updateDisplay() {
+            resultEl.textContent = currentInput;
+            if (operation && previousInput) {
+                expressionEl.textContent = `${previousInput} ${operation} ${currentInput}`;
+            } else {
+                expressionEl.textContent = '';
+            }
+        }
+
+        function appendNumber(num) {
+            if (shouldReset) {
+                currentInput = '0';
+                shouldReset = false;
+            }
+            if (currentInput === '0' && num !== '.') {
+                currentInput = num;
+            } else {
+                currentInput += num;
+            }
+            updateDisplay();
+        }
+
+        function appendDot() {
+            if (shouldReset) {
+                currentInput = '0';
+                shouldReset = false;
+            }
+            if (!currentInput.includes('.')) {
+                currentInput += '.';
+            }
+            updateDisplay();
+        }
+
+        function appendOperator(op) {
+            if (operation && previousInput && !shouldReset) {
+                calculate();
+            }
+            previousInput = currentInput;
+            operation = op;
+            shouldReset = true;
+            updateDisplay();
+        }
+
+        function calculate() {
+            if (!operation || !previousInput) return;
+            const prev = parseFloat(previousInput);
+            const curr = parseFloat(currentInput);
+            let result = 0;
+
+            switch (operation) {
+                case '+': result = prev + curr; break;
+                case '-': result = prev - curr; break;
+                case '*': result = prev * curr; break;
+                case '/':
+                    if (curr === 0) {
+                        resultEl.textContent = 'Ошибка';
+                        setTimeout(() => clearAll(), 1000);
+                        return;
+                    }
+                    result = prev / curr;
+                    break;
+                default: return;
+            }
+
+            const expression = `${previousInput} ${operation} ${currentInput}`;
+            const finalResult = parseFloat(result.toFixed(10));
+            currentInput = String(finalResult);
+            operation = null;
+            previousInput = '';
+            shouldReset = true;
+            updateDisplay();
+            addHistory(expression, finalResult);
+        }
+
+        function clearAll() {
+            currentInput = '0';
+            previousInput = '';
+            operation = null;
+            shouldReset = false;
+            updateDisplay();
+        }
+
+        function clearEntry() {
+            currentInput = '0';
+            updateDisplay();
+        }
+
+        function backspace() {
+            if (shouldReset) return;
+            if (currentInput.length > 1) {
+                currentInput = currentInput.slice(0, -1);
+            } else {
+                currentInput = '0';
+            }
+            updateDisplay();
+        }
+
+        // --- ТЕМА ---
+        function toggleTheme() {
+            const container = document.getElementById('calcContainer');
+            container.toggleAttribute('data-theme');
+        }
+
+        // --- КЛАВИАТУРА ---
+        document.addEventListener('keydown', (e) => {
+            if (e.key >= '0' && e.key <= '9') appendNumber(e.key);
+            if (e.key === '.') appendDot();
+            if (e.key === '+') appendOperator('+');
+            if (e.key === '-') appendOperator('-');
+            if (e.key === '*') appendOperator('*');
+            if (e.key === '/') appendOperator('/');
+            if (e.key === 'Enter' || e.key === '=') calculate();
+            if (e.key === 'Backspace') backspace();
+            if (e.key === 'Escape' || e.key === 'c' || e.key === 'C') clearAll();
+            // Предотвращаем скролл
+            if (['+', '-', '*', '/', 'Enter', 'Backspace', 'Escape', '.', '=', 'c', 'C'].includes(e.key)) {
+                e.preventDefault();
+            }
+        });
+
+        // --- ИНИЦИАЛИЗАЦИЯ ---
+        loadHistory();
+        updateDisplay();
+    </script>
+
+</body>
+</html>
